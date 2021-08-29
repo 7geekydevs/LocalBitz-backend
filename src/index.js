@@ -18,3 +18,8 @@ const port = process.env.PORT || 3000
 app.listen(port , () => {
     console.log('server up on ' + port)
 })
+
+
+//bugs
+//validation doesnt run in patch
+//type in models isnt validation but it automatically changes data to specified type

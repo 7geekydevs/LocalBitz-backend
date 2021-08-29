@@ -7,8 +7,9 @@ const router = express.Router()
 //models
 const menuItemModel = require('../models/menu_item_model')
 
-router.get('/menu' , (req, res) =>{
-    res.send('get menu endpoint')
+router.get('/menu' , async (req, res) =>{
+    const menuitems = await menuItemModel.find({})
+    res.send(menuitems)
 })
 
 router.post('/menu' , async (req, res) =>{
@@ -24,12 +25,25 @@ router.post('/menu' , async (req, res) =>{
 
 })
 
-router.patch('/menu' , (req, res) =>{
-    res.send(req.body)
+
+router.patch('/menu/:id' , async (req, res) =>{
+    try{
+    await menuItemModel.findByIdAndUpdate(req.params.id , req.body)
+    const menuItem = await menuItemModel.findById(req.params.id)
+    res.send(menuItem)
+    }catch(e){
+        res.status(400).send(e)
+    }
+
 })
 
-router.delete('/menu' , (req, res) =>{
-    res.send('delete menu endpoint')
+router.delete('/menu/:id' , async (req, res) =>{
+    try{
+        await menuItemModel.findByIdAndDelete(req.params.id)
+        res.send()
+    }catch(e){
+        res.status(400).send(e)
+    }
 })
 
 

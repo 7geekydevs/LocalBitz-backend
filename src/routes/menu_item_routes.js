@@ -5,16 +5,16 @@ const express = require('express')
 const router = express.Router()
 
 //models
-const menuItem = require('../models/menu_item_model')
+const MenuItem = require('../models/menu_item_model')
 
 router.get('/menu' , async (req, res) =>{
-    const items = await menuItem.find({})
+    const items = await MenuItem.find({})
     res.send(items)
 })
 
 router.post('/menu' , async (req, res) =>{
 
-    const item = new menuItem(req.body)
+    const item = new MenuItem(req.body)
 
     try{
         await item.save()
@@ -30,18 +30,14 @@ router.patch('/menu/:id' , async (req, res) =>{
 
     const allowedUpdates = ['name' , 'price' , 'rating']
     const updates = Object.keys(req.body)
-
     const isOperationValid = updates.every((update) => allowedUpdates.includes(update))
-
-    // await menuItemModel.findByIdAndUpdate(req.params.id , req.body)
-    // const menuItem = await menuItemModel.findById(req.params.id)
 
     if(!isOperationValid){
         res.status(400).send({'Error' : 'Invalid Updates'})
     }
 
     try{
-        const item = await menuItem.findById(req.params.id)
+        const item = await MenuItem.findById(req.params.id)
         updates.forEach((update) => {
             item[update] = req.body[update]
         }
@@ -56,7 +52,7 @@ router.patch('/menu/:id' , async (req, res) =>{
 
 router.delete('/menu/:id' , async (req, res) =>{
     try{
-        await menuItem.findByIdAndDelete(req.params.id)
+        await MenuItem.findByIdAndDelete(req.params.id)
         res.send()
     }catch(e){
         res.status(400).send(e)

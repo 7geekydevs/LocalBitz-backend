@@ -5,20 +5,20 @@ const express = require('express')
 const router = express.Router()
 
 //models
-const menuItemModel = require('../models/menu_item_model')
+const menuItem = require('../models/menu_item_model')
 
 router.get('/menu' , async (req, res) =>{
-    const menuitems = await menuItemModel.find({})
-    res.send(menuitems)
+    const items = await menuItem.find({})
+    res.send(items)
 })
 
 router.post('/menu' , async (req, res) =>{
 
-    const menuItem = new menuItemModel(req.body)
+    const item = new menuItem(req.body)
 
     try{
-        await menuItem.save()
-        res.status(201).send(menuItem)
+        await item.save()
+        res.status(201).send(item)
     }catch(e){
         res.status(400).send(e)
     }
@@ -41,7 +41,7 @@ router.patch('/menu/:id' , async (req, res) =>{
     }
 
     try{
-        const item = await menuItemModel.findById(req.params.id)
+        const item = await menuItem.findById(req.params.id)
         updates.forEach((update) => {
             item[update] = req.body[update]
         }
@@ -56,7 +56,7 @@ router.patch('/menu/:id' , async (req, res) =>{
 
 router.delete('/menu/:id' , async (req, res) =>{
     try{
-        await menuItemModel.findByIdAndDelete(req.params.id)
+        await menuItem.findByIdAndDelete(req.params.id)
         res.send()
     }catch(e){
         res.status(400).send(e)

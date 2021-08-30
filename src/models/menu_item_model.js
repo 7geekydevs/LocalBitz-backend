@@ -28,8 +28,8 @@ const menuItemSchema = new mongoose.Schema({
         type : Number,
         trim : true,
         validate(value){
-            if(value > 5){
-                throw new Error('Rating annot exceed 5')
+            if(value > 5 || value < 1){
+                throw new Error('Invalid Rating value Entered . Valid values : 1,2,3,4,5')
             }
         }
     },

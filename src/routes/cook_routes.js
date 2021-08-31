@@ -7,21 +7,37 @@ const router = express.Router()
 //models
 const Cook = require('../models/cook_model')
 
+//get cooks
 router.get('/cooks' , async(req , res) => {
     const cooks = await Cook.find({})
     res.send(cooks)
 })
 
+//sign up cook
 router.post('/cooks' , async(req,res)=>{
     const cook = new Cook(req.body)
     try{
         await cook.save()
-        res.status(201).send(cook)
+        const token = await cook.generateAuthToken()
+        res.status(201).send({cook , token})
     }catch(e){
         res.status(400).send(e)
     }
 })
 
+//login cook
+router.post('/cooks/login' , async (req , res) => {
+    try{
+        const cook = await Cook.findCook(req.body.email , req.body.password)
+        const token = await cook.generateAuthToken()
+        res.send({cook , token})
+    }
+    catch(e){
+        res.status(400).send(e.toString())
+    }
+})
+
+//update cook
 router.patch('/cooks/:id' , async(req,res)=>{
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name' , 'email' , 'password']
@@ -44,6 +60,7 @@ router.patch('/cooks/:id' , async(req,res)=>{
     
 })
 
+//delete cook
 router.delete('/cooks/:id' , async(req,res)=>{
     try{
         await Cook.findByIdAndDelete(req.params.id)
@@ -54,4 +71,5 @@ router.delete('/cooks/:id' , async(req,res)=>{
     }
 })
 
+//export router
 module.exports = router

@@ -7,10 +7,13 @@ const router = express.Router()
 //models
 const Cook = require('../models/cook_model')
 
+//middleware
+const auth = require('../middleware/auth')
+
 //get cooks
-router.get('/cooks' , async(req , res) => {
-    const cooks = await Cook.find({})
-    res.send(cooks)
+router.get('/cooks/me' , auth , async(req , res) => {
+    // const cooks = await Cook.find({})
+    res.send(req.cook)
 })
 
 //sign up cook
@@ -38,7 +41,7 @@ router.post('/cooks/login' , async (req , res) => {
 })
 
 //update cook
-router.patch('/cooks/:id' , async(req,res)=>{
+router.patch('/cooks/me' , auth , async(req,res)=>{
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name' , 'email' , 'password']
     const isOperationValid = updates.every((update) => allowedUpdates.includes(update))
@@ -46,28 +49,29 @@ router.patch('/cooks/:id' , async(req,res)=>{
         res.status(400).send({'Error' : 'Invalid Updates'})
     }
     try{
-        const cook = await Cook.findById(req.params.id)
+        // const cook = await Cook.findById(req.params.id)
         updates.forEach(
             (update) =>{
-                cook[update] = req.body[update]
+                req.cook[update] = req.body[update]
             }
         )
-        await cook.save()
-        return res.send(cook)
+        await req.cook.save()
+        return res.send(req.cook)
         }catch(e){
-            res.status(500).send(e)
+            res.status(500).send(e.toString())
         }
     
 })
 
 //delete cook
-router.delete('/cooks/:id' , async(req,res)=>{
+router.delete('/cooks/me' , auth ,async(req,res)=>{
     try{
-        await Cook.findByIdAndDelete(req.params.id)
-        res.send()
+        // await Cook.findByIdAndDelete(req.params.id)
+        await req.cook.remove()
+        res.send(req.cook)
     }
     catch(e){
-        res.send(e)
+        res.send(e.toString())
     }
 })
 

@@ -10,10 +10,29 @@ const Cook = require('../models/cook_model')
 //middleware
 const auth = require('../middleware/auth')
 
-//get cooks
+//get my profile
 router.get('/cooks/me' , auth , async(req , res) => {
     // const cooks = await Cook.find({})
     res.send(req.cook)
+})
+
+//get profile of any cook
+router.get('/cooks/:id' , async(req , res) => {
+    try{
+        const cook = await Cook.find({_id : req.params.id})
+        if(cook.length === 0){
+            throw new Error('Cook not found')
+        }
+        res.send(
+            {
+                _id :cook[0]._id , 
+                name : cook[0].name ,
+                email : cook[0].email
+            }
+            )
+    }catch(e){
+        res.status(400).send(e.toString())
+    }
 })
 
 //sign up cook

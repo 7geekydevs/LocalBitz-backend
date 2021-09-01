@@ -1,9 +1,8 @@
 const mongoose = require('mongoose')
 
 const menuItemSchema = new mongoose.Schema({
-    cookId : {
-        // type : mongoose.Schema.Types.ObjectId,
-        type : String,
+    cook : {
+        type : mongoose.Schema.Types.ObjectId,
         required : true
     },
     
@@ -34,6 +33,9 @@ const menuItemSchema = new mongoose.Schema({
         }
     },
 
+},
+{
+    timestamps : true
 }
 )
 

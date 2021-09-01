@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const MenuItem = require('./menu_item_model')
 
 const cookSchema = mongoose.Schema(
     {
@@ -38,8 +39,22 @@ const cookSchema = mongoose.Schema(
             }
             }
         ],
+    },
+    {
+        timestamps : true
     }
 )
+
+//virtual relationships
+cookSchema.virtual(
+    'menuitems' , 
+    {
+        ref : 'MenuItem',
+        localField : '_id',
+        foreignField : 'cook'
+    }
+)
+
 
 cookSchema.pre('save' , async function(){
     const cook = this

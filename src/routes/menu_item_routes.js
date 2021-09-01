@@ -12,9 +12,9 @@ const auth = require('../middleware/auth')
 
 //---------------------------------------------------------------------------------------------------------
 
-//get all menu item
+//get all menu items for a particular cook
 router.get('/menu' , async (req, res) =>{
-    const items = await MenuItem.find({})
+    const items = await MenuItem.find({cook : req.query.cook})
     res.send(items)
 })
 
@@ -59,15 +59,19 @@ router.patch('/menu/:id' , auth , async (req, res) =>{
     }
 
     try{
-        const item = await MenuItem.findById(req.params.id)
+        const item = await MenuItem.findOne({ _id : req.params.id , cook : req.cook._id})
+        if(item === null){
+            throw new Error('No Menu Item found!')
+        }
         updates.forEach((update) => {
             item[update] = req.body[update]
         }
         )
         await item.save()
         return res.send(item)
+
     }catch(e){
-        res.status(500).send(e)
+        res.status(500).send(e.toString())
     }
 
 })
@@ -75,10 +79,14 @@ router.patch('/menu/:id' , auth , async (req, res) =>{
 //delete menu item
 router.delete('/menu/:id' , auth , async (req, res) =>{
     try{
-        await MenuItem.findByIdAndDelete(req.params.id)
-        res.send()
+        const item = await MenuItem.findOne({ _id : req.params.id , cook : req.cook._id})
+        if(item === null){
+            throw new Error('No Menu Item found!')
+        }
+        await item.remove()
+        res.send(item)
     }catch(e){
-        res.status(400).send(e)
+        res.status(400).send(e.toString())
     }
 })
 

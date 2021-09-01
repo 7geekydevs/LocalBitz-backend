@@ -17,23 +17,35 @@ router.get('/cooks/me' , auth , async(req , res) => {
 })
 
 //get profile of any cook
-router.get('/cooks/:id' , async(req , res) => {
+router.get('/cooks' , async(req , res) => {
+    let query = {}
+    let counter = 0
+    let newCookList = []
+    if(req.query.name){
+        query.name = req.query.name
+    }
+        if(req.query.email){
+        query.email = req.query.email
+    }
     try{
-        const cook = await Cook.find({_id : req.params.id})
-        if(cook.length === 0){
+        const cookList = await Cook.find(query)
+        if(cookList.length === 0){
             throw new Error('Cook not found')
         }
-        res.send(
-            {
-                _id :cook[0]._id , 
-                name : cook[0].name ,
-                email : cook[0].email
+        for(counter ; counter < cookList.length ; counter++){
+            const newCook =  {
+                _id :cookList[counter]._id , 
+                name : cookList[counter].name ,
+                email : cookList[counter].email
             }
-            )
+            newCookList = newCookList.concat(newCook)
+        }
+        res.send(newCookList)
     }catch(e){
         res.status(400).send(e.toString())
     }
-})
+}
+)
 
 //sign up cook
 router.post('/cooks' , async(req,res)=>{

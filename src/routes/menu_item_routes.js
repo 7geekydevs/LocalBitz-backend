@@ -7,14 +7,36 @@ const router = express.Router()
 //models
 const MenuItem = require('../models/menu_item_model')
 
+//middleware
+const auth = require('../middleware/auth')
+
+//---------------------------------------------------------------------------------------------------------
+
+//get all menu items for a particular cook
 router.get('/menu' , async (req, res) =>{
-    const items = await MenuItem.find({})
+    const items = await MenuItem.find({cook : req.query.cook})
     res.send(items)
 })
 
-router.post('/menu' , async (req, res) =>{
+//get current user menu items
+router.get('/menu/me' , auth , async (req,res) => {
+    await req.cook.populate(
+        {
+            path : 'menuitems',
+        }
+    )
+    res.send(req.cook.menuitems)
+}
+)
 
-    const item = new MenuItem(req.body)
+//post menu
+router.post('/menu' , auth , async (req, res) =>{
+    const item = new MenuItem(
+    {       
+        ...req.body,
+        cook : req.cook._id
+    }
+        )
 
     try{
         await item.save()
@@ -25,8 +47,8 @@ router.post('/menu' , async (req, res) =>{
 
 })
 
-
-router.patch('/menu/:id' , async (req, res) =>{
+//update menu item
+router.patch('/menu/:id' , auth , async (req, res) =>{
 
     const allowedUpdates = ['name' , 'price' , 'rating']
     const updates = Object.keys(req.body)
@@ -37,28 +59,38 @@ router.patch('/menu/:id' , async (req, res) =>{
     }
 
     try{
-        const item = await MenuItem.findById(req.params.id)
+        const item = await MenuItem.findOne({ _id : req.params.id , cook : req.cook._id})
+        if(item === null){
+            throw new Error('No Menu Item found!')
+        }
         updates.forEach((update) => {
             item[update] = req.body[update]
         }
         )
         await item.save()
         return res.send(item)
+
     }catch(e){
-        res.status(500).send(e)
+        res.status(500).send(e.toString())
     }
 
 })
 
-router.delete('/menu/:id' , async (req, res) =>{
+//delete menu item
+router.delete('/menu/:id' , auth , async (req, res) =>{
     try{
-        await MenuItem.findByIdAndDelete(req.params.id)
-        res.send()
+        const item = await MenuItem.findOne({ _id : req.params.id , cook : req.cook._id})
+        if(item === null){
+            throw new Error('No Menu Item found!')
+        }
+        await item.remove()
+        res.send(item)
     }catch(e){
-        res.status(400).send(e)
+        res.status(400).send(e.toString())
     }
 })
 
+//---------------------------------------------------------------------------------------------------------
 
 
 module.exports = router

@@ -75,17 +75,31 @@ router.post('/cooks/login' , async (req , res) => {
 //update cook
 router.patch('/cooks/me' , auth , async(req,res)=>{
     const updates = Object.keys(req.body)
-    const allowedUpdates = ['name' , 'email' , 'password' , 'address']
+    const allowedUpdates = ['name' , 'email' , 'password' , 'address' , 'reviews' , "rating"]
     const isOperationValid = updates.every((update) => allowedUpdates.includes(update))
     if(!isOperationValid){
         res.status(400).send({'Error' : 'Invalid Updates'})
     }
     try{
         // const cook = await Cook.findById(req.params.id)
-        updates.forEach(
-            (update) =>{
+        // updates.forEach(
+        //     (update) =>{
+        //         req.cook[update] = req.body[update]
+        //     }
+        // )
+        updates.forEach((update) => {
+            if(update === 'reviews' && req.cook[update].length > 0){
+                req.body[update].map(
+                    (review) =>{
+                        req.cook[update] = req.cook[update].concat(review)
+                    }
+                )
+            }
+            else{
                 req.cook[update] = req.body[update]
             }
+            
+        }
         )
         await req.cook.save()
         return res.send(req.cook)

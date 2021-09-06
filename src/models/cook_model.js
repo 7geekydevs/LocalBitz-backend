@@ -50,7 +50,7 @@ const cookSchema = mongoose.Schema(
             },
             postalCode : {
                 type : Number,
-                default : 000000
+                default : 0
             },
             addressLine1 : {
                 type : String,
@@ -61,6 +61,24 @@ const cookSchema = mongoose.Schema(
                 type : String,
                 trim : true,
                 default : ''
+            }
+        },
+
+        reviews : [
+        {
+            review : {
+                type : String
+            }
+        }
+        ],
+
+        rating : {
+            type : Number,
+            trim : true,
+            validate(value){
+                if(value > 5 || value < 1){
+                    throw new Error('Invalid Rating value Entered . Valid values : 1,2,3,4,5')
+                }
             }
         },
 

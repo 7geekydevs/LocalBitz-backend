@@ -33,6 +33,36 @@ const menuItemSchema = new mongoose.Schema({
         }
     },
 
+    ingrediants : [
+        {
+            ingrediant : {
+                type : String,
+                trim : true
+            }
+        }
+    ],
+
+    dietType : {
+        type : String,
+        trim : true,
+        validate(value){
+            const allowedTypes = ['VEG' , 'NON_VEG']
+            if(!allowedTypes.includes(value)){
+                throw new Error('Invalid Value! Allowed Values : [VEG , NON_VEG]')
+            }
+        }
+    },
+
+    reviews : [
+        {
+            review : {
+                type : String
+            }
+        }
+    ]
+
+
+
 },
 {
     timestamps : true

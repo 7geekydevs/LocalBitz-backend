@@ -32,7 +32,7 @@ router.get('/menu/me' , auth , async (req,res) => {
 //post menu
 router.post('/menu' , auth , async (req, res) =>{
     const item = new MenuItem(
-    {       
+    {    
         ...req.body,
         cook : req.cook._id
     }
@@ -50,7 +50,7 @@ router.post('/menu' , auth , async (req, res) =>{
 //update menu item
 router.patch('/menu/:id' , auth , async (req, res) =>{
 
-    const allowedUpdates = ['name' , 'price' , 'rating']
+    const allowedUpdates = ['name' , 'price' , 'rating' , 'dietType' , 'ingrediants' , 'reviews']
     const updates = Object.keys(req.body)
     const isOperationValid = updates.every((update) => allowedUpdates.includes(update))
 
@@ -64,17 +64,26 @@ router.patch('/menu/:id' , auth , async (req, res) =>{
             throw new Error('No Menu Item found!')
         }
         updates.forEach((update) => {
-            item[update] = req.body[update]
+            if((update === 'reviews' || update === 'ingrediants') && item[update].length > 0){
+                req.body[update].map(
+                    (review) =>{
+                        item[update] = item[update].concat(review)
+                    }
+                )
+            }
+            else{
+                item[update] = req.body[update]
+            }
+            
         }
         )
         await item.save()
         return res.send(item)
-
     }catch(e){
-        res.status(500).send(e.toString())
+        res.status(404).send(e.toString())
     }
-
-})
+}
+)
 
 //delete menu item
 router.delete('/menu/:id' , auth , async (req, res) =>{
@@ -86,7 +95,7 @@ router.delete('/menu/:id' , auth , async (req, res) =>{
         await item.remove()
         res.send(item)
     }catch(e){
-        res.status(400).send(e.toString())
+        res.status(404).send(e.toString())
     }
 })
 

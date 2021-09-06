@@ -31,6 +31,39 @@ const cookSchema = mongoose.Schema(
             minlength : 7,
         },
 
+        // address : {
+        //     type : String,
+        //     trim : true,
+        //     default : ''
+        // },
+
+        address : {
+            state_UT : {
+                type : String,
+                trim : true,
+                default : ''
+            },
+            city : {
+                type : String,
+                trim : true,
+                default : ''
+            },
+            postalCode : {
+                type : Number,
+                default : 000000
+            },
+            addressLine1 : {
+                type : String,
+                trim : true,
+                default : ''
+            },
+            addressLine2 : {
+                type : String,
+                trim : true,
+                default : ''
+            }
+        },
+
         tokens : [
             {
                 token : {

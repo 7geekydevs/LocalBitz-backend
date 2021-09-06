@@ -36,7 +36,8 @@ router.get('/cooks' , async(req , res) => {
             const newCook =  {
                 _id :cookList[counter]._id , 
                 name : cookList[counter].name ,
-                email : cookList[counter].email
+                email : cookList[counter].email,
+                address : cookList[counter].address
             }
             newCookList = newCookList.concat(newCook)
         }
@@ -74,7 +75,7 @@ router.post('/cooks/login' , async (req , res) => {
 //update cook
 router.patch('/cooks/me' , auth , async(req,res)=>{
     const updates = Object.keys(req.body)
-    const allowedUpdates = ['name' , 'email' , 'password']
+    const allowedUpdates = ['name' , 'email' , 'password' , 'address']
     const isOperationValid = updates.every((update) => allowedUpdates.includes(update))
     if(!isOperationValid){
         res.status(400).send({'Error' : 'Invalid Updates'})

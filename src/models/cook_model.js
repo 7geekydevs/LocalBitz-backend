@@ -31,6 +31,60 @@ const cookSchema = mongoose.Schema(
             minlength : 7,
         },
 
+        address : {
+            state_UT : {
+                type : String,
+                trim : true,
+                default : ''
+            },
+            city : {
+                type : String,
+                trim : true,
+                default : ''
+            },
+            postalCode : {
+                type : Number,
+                default : 0
+            },
+            addressLine1 : {
+                type : String,
+                trim : true,
+                default : ''
+            },
+            addressLine2 : {
+                type : String,
+                trim : true,
+                default : ''
+            }
+        },
+
+        reviews : [
+        {
+            review : {
+                type : String
+            }
+        }
+        ],
+
+        openHours : {
+            open : {
+                type : Number,
+            },
+            close : {
+                type : Number,
+            }
+        },
+
+        rating : {
+            type : Number,
+            trim : true,
+            validate(value){
+                if(value > 5 || value < 1){
+                    throw new Error('Invalid Rating value Entered . Valid values : 1,2,3,4,5')
+                }
+            }
+        },
+
         tokens : [
             {
                 token : {

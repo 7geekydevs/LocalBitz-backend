@@ -31,12 +31,6 @@ const cookSchema = mongoose.Schema(
             minlength : 7,
         },
 
-        // address : {
-        //     type : String,
-        //     trim : true,
-        //     default : ''
-        // },
-
         address : {
             state_UT : {
                 type : String,

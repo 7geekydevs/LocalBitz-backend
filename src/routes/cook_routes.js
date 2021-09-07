@@ -17,33 +17,45 @@ router.get('/cooks/me' , auth , async(req , res) => {
 
 //get profile of any cook
 router.get('/cooks' , async(req , res) => {
+
+    // let query = new Map()
     let query = {}
-    let counter = 0
-    let newCookList = []
+
+
+    //populating query object
     if(req.query.name){
         query.name = req.query.name
     }
-        if(req.query.email){
+    if(req.query.email){
         query.email = req.query.email
     }
+    if(req.query.rating){
+        query.rating = req.query.rating
+    }
+    if(req.query.open){
+        query['openHours.open']= req.query.open
+    }
+    if(req.query.close){
+        query['openHours.close'] = req.query.close
+    }
+    if(req.query.state_UT){
+        query['address.state_UT'] = req.query.state_UT
+    }
+    if(req.query.city){
+        query['address.city'] = req.query.city
+    }
+    if(req.query.postalCode){
+        query['address.postalCode'] = req.query.postalCode
+    }
+
+
+
     try{
-        const cookList = await Cook.find(query)
+        const cookList = await Cook.find( query , {tokens : 0 , password : 0})
         if(cookList.length === 0){
             throw new Error('Cook not found')
         }
-        for(counter ; counter < cookList.length ; counter++){
-            const newCook =  {
-                _id :cookList[counter]._id , 
-                name : cookList[counter].name ,
-                email : cookList[counter].email,
-                address : cookList[counter].address,
-                reviews : cookList[counter].reviews,
-                rating : cookList[counter].rating,
-                openHours : cookList[counter].openHours,
-            }
-            newCookList = newCookList.concat(newCook)
-        }
-        res.send(newCookList)
+        res.send(cookList)
     }catch(e){
         res.status(400).send(e.toString())
     }

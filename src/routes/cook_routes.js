@@ -12,7 +12,6 @@ const auth = require('../middleware/auth')
 
 //get my profile
 router.get('/cooks/me' , auth , async(req , res) => {
-    // const cooks = await Cook.find({})
     res.send(req.cook)
 })
 
@@ -37,7 +36,10 @@ router.get('/cooks' , async(req , res) => {
                 _id :cookList[counter]._id , 
                 name : cookList[counter].name ,
                 email : cookList[counter].email,
-                address : cookList[counter].address
+                address : cookList[counter].address,
+                reviews : cookList[counter].reviews,
+                rating : cookList[counter].rating,
+                openHours : cookList[counter].openHours,
             }
             newCookList = newCookList.concat(newCook)
         }
@@ -75,18 +77,12 @@ router.post('/cooks/login' , async (req , res) => {
 //update cook
 router.patch('/cooks/me' , auth , async(req,res)=>{
     const updates = Object.keys(req.body)
-    const allowedUpdates = ['name' , 'email' , 'password' , 'address' , 'reviews' , "rating"]
+    const allowedUpdates = ['name' , 'email' , 'password' , 'address' , 'reviews' , "rating" , "openHours"]
     const isOperationValid = updates.every((update) => allowedUpdates.includes(update))
     if(!isOperationValid){
         res.status(400).send({'Error' : 'Invalid Updates'})
     }
     try{
-        // const cook = await Cook.findById(req.params.id)
-        // updates.forEach(
-        //     (update) =>{
-        //         req.cook[update] = req.body[update]
-        //     }
-        // )
         updates.forEach((update) => {
             if(update === 'reviews' && req.cook[update].length > 0){
                 req.body[update].map(

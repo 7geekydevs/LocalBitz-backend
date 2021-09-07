@@ -72,6 +72,15 @@ const cookSchema = mongoose.Schema(
         }
         ],
 
+        openHours : {
+            open : {
+                type : Number,
+            },
+            close : {
+                type : Number,
+            }
+        },
+
         rating : {
             type : Number,
             trim : true,

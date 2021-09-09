@@ -103,6 +103,24 @@ router.patch('/cooks/me' , auth , async(req,res)=>{
                     }
                 )
             }
+            else if(update === 'address' || update === 'openHours'){
+                const parent = update
+                const updates = Object.keys(req.body[update])
+                const allowedUpdates = ['state_UT' , 'city' , 'postalCode' , 'addressLine1' , 'addressLine2' , 'open' , 'close']
+                const isOperationValid = updates.every(
+                    (update) => allowedUpdates.includes(update)    
+                )
+                if(!isOperationValid){
+                    return res.status(400).send({'Error' : 'Invalid Updates'})
+                }
+                try{
+                    req.cook[parent] = {...req.cook[parent] , ...req.body[update]}
+                    
+                }catch(e){
+                    console.log('error in address/openhours update')
+                }
+
+            }
             else{
                 req.cook[update] = req.body[update]
             }

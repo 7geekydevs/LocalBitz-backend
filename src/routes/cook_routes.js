@@ -8,10 +8,10 @@ const router = express.Router()
 const Cook = require('../models/cook_model')
 
 //middleware
-const auth = require('../middleware/auth')
+const {cookAuth} = require('../middleware/auth')
 
 //get my profile
-router.get('/cooks/me' , auth , async(req , res) => {
+router.get('/cooks/me' , cookAuth , async(req , res) => {
     res.send(req.cook)
 })
 
@@ -70,8 +70,8 @@ router.post('/cooks' , async(req,res)=>{
         const token = await cook.generateAuthToken()
         res.status(201).send({cook , token})
     }catch(e){
-        res.status(400).send(e)
-    }
+        res.status(400).send(e.toString())
+}
 })
 
 //login cook
@@ -86,8 +86,19 @@ router.post('/cooks/login' , async (req , res) => {
     }
 })
 
+router.post('/cooks/logout' , cookAuth , async(req,res) => {
+    try{    
+        req.cook.tokens = []
+        await req.cook.save()
+        res.send()
+    }catch(e)
+    {
+        res.send(e.toString())
+    }
+})
+
 //update cook
-router.patch('/cooks/me' , auth , async(req,res)=>{
+router.patch('/cooks/me' , cookAuth , async(req,res)=>{
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name' , 'email' , 'password' , 'address' , 'reviews' , "rating" , "openHours"]
     const isOperationValid = updates.every((update) => allowedUpdates.includes(update))
@@ -136,9 +147,8 @@ router.patch('/cooks/me' , auth , async(req,res)=>{
 })
 
 //delete cook
-router.delete('/cooks/me' , auth ,async(req,res)=>{
+router.delete('/cooks/me' , cookAuth ,async(req,res)=>{
     try{
-        // await Cook.findByIdAndDelete(req.params.id)
         await req.cook.remove()
         res.send(req.cook)
     }

@@ -8,7 +8,7 @@ const router = express.Router()
 const MenuItem = require('../models/menu_item_model')
 
 //middleware
-const auth = require('../middleware/auth')
+const {cookAuth} = require('../middleware/auth')
 
 //---------------------------------------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ router.get('/menu' , async (req, res) =>{
 })
 
 //get current user menu items
-router.get('/menu/me' , auth , async (req,res) => {
+router.get('/menu/me' , cookAuth , async (req,res) => {
     await req.cook.populate(
         {
             path : 'menuitems',
@@ -30,7 +30,7 @@ router.get('/menu/me' , auth , async (req,res) => {
 )
 
 //post menu
-router.post('/menu' , auth , async (req, res) =>{
+router.post('/menu' , cookAuth , async (req, res) =>{
     const item = new MenuItem(
     {    
         ...req.body,
@@ -48,7 +48,7 @@ router.post('/menu' , auth , async (req, res) =>{
 })
 
 //update menu item
-router.patch('/menu/:id' , auth , async (req, res) =>{
+router.patch('/menu/:id' , cookAuth , async (req, res) =>{
 
     const allowedUpdates = ['name' , 'price' , 'rating' , 'dietType' , 'ingrediants' , 'reviews']
     const updates = Object.keys(req.body)
@@ -86,7 +86,7 @@ router.patch('/menu/:id' , auth , async (req, res) =>{
 )
 
 //delete menu item
-router.delete('/menu/:id' , auth , async (req, res) =>{
+router.delete('/menu/:id' , cookAuth , async (req, res) =>{
     try{
         const item = await MenuItem.findOne({ _id : req.params.id , cook : req.cook._id})
         if(item === null){

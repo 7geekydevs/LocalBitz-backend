@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Atharv-Joshi/LocalBitz-backend#readme",
   "devDependencies": {
+    "chalk": "^4.1.2",
     "nodemon": "^2.0.12"
   },
   "dependencies": {

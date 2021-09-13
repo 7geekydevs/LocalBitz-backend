@@ -14,7 +14,7 @@ const {cookAuth} = require('../middleware/auth')
 
 //get all menu items for a particular cook
 router.get('/menu' , async (req, res) =>{
-    const items = await MenuItem.find({cook : req.query.cook})
+    const items = await MenuItem.find({cook : req.query.cook})  
     res.send(items)
 })
 

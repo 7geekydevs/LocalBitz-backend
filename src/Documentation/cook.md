@@ -98,7 +98,7 @@ Authentication : Bearer Token
 - rating
 - openHours
 
-#### Temporarily entire address and openHours document has to be updated while updating fields in the nested documents
+
 ## - DELETE Cook
 Authentication : Bearer Token
 

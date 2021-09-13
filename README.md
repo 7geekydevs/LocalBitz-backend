@@ -4,6 +4,6 @@
 
 # Documentation
 
-- [Cook](https://github.com/Atharv-Joshi/LocalBitz-backend/blob/dev/src/Documentation/cook.md)
-- [Customer](https://github.com/Atharv-Joshi/LocalBitz-backend/blob/dev/src/Documentation/customer.md)
-- [Menu Item](https://github.com/Atharv-Joshi/LocalBitz-backend/blob/dev/src/Documentation/menuItem.md)
+- [Cook](https://github.com/Atharv-Joshi/LocalBitz-backend/blob/dev/Documentation/cook.md)
+- [Customer](https://github.com/Atharv-Joshi/LocalBitz-backend/blob/dev/Documentation/customer.md)
+- [Menu Item](https://github.com/Atharv-Joshi/LocalBitz-backend/blob/dev/Documentation/menuItem.md)

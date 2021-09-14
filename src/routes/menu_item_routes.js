@@ -1,24 +1,17 @@
-//packages
 const express = require('express')
 
-//router
 const router = express.Router()
 
-//models
 const MenuItem = require('../models/menu_item_model')
 
-//middleware
 const {cookAuth} = require('../middleware/auth')
 
-//---------------------------------------------------------------------------------------------------------
 
-//get all menu items for a particular cook
 router.get('/menu' , async (req, res) =>{
     const items = await MenuItem.find({cook : req.query.cook})  
     res.send(items)
 })
 
-//get current user menu items
 router.get('/menu/me' , cookAuth , async (req,res) => {
     await req.cook.populate(
         {
@@ -29,7 +22,6 @@ router.get('/menu/me' , cookAuth , async (req,res) => {
 }
 )
 
-//post menu
 router.post('/menu' , cookAuth , async (req, res) =>{
     const item = new MenuItem(
     {    
@@ -47,12 +39,12 @@ router.post('/menu' , cookAuth , async (req, res) =>{
 
 })
 
-//update menu item
 router.patch('/menu/:id' , cookAuth , async (req, res) =>{
 
     const allowedUpdates = ['name' , 'price' , 'rating' , 'dietType' , 'ingrediants' , 'reviews']
     const updates = Object.keys(req.body)
     const isOperationValid = updates.every((update) => allowedUpdates.includes(update))
+    const listAttributes = ['reviews' , 'ingrediants']
 
     if(!isOperationValid){
         res.status(400).send({'Error' : 'Invalid Updates'})
@@ -64,7 +56,7 @@ router.patch('/menu/:id' , cookAuth , async (req, res) =>{
             throw new Error('No Menu Item found!')
         }
         updates.forEach((update) => {
-            if((update === 'reviews' || update === 'ingrediants') && item[update].length > 0){
+            if((listAttributes.includes(update)) && item[update].length > 0){
                 req.body[update].map(
                     (review) =>{
                         item[update] = item[update].concat(review)
@@ -85,7 +77,6 @@ router.patch('/menu/:id' , cookAuth , async (req, res) =>{
 }
 )
 
-//delete menu item
 router.delete('/menu/:id' , cookAuth , async (req, res) =>{
     try{
         const item = await MenuItem.findOne({ _id : req.params.id , cook : req.cook._id})
@@ -99,7 +90,6 @@ router.delete('/menu/:id' , cookAuth , async (req, res) =>{
     }
 })
 
-//---------------------------------------------------------------------------------------------------------
 
 
 module.exports = router

@@ -4,12 +4,10 @@ const {customerAuth} = require('../middleware/auth')
 
 const router = express.Router()
 
-//my profile
 router.get('/customers/me' , customerAuth , (req , res) => {
     res.send(req.customer)
 })
 
-//register customer
 router.post('/customers' , async(req,res) =>{
     const customer = Customer(req.body)
     try{
@@ -23,7 +21,6 @@ router.post('/customers' , async(req,res) =>{
 }
 )
 
-//login customer
 router.post('/customers/login' , async (req , res) =>{
     try{
         const customer = await Customer.findCustomer(req.body.email , req.body.password)
@@ -35,7 +32,6 @@ router.post('/customers/login' , async (req , res) =>{
     }
 })
 
-//logout customer
 router.post('/customers/logout' , customerAuth , async(req,res) => {
     try{    
         req.customer.tokens = []
@@ -47,7 +43,6 @@ router.post('/customers/logout' , customerAuth , async(req,res) => {
     }
 })
 
-//update customer
 router.patch('/customers/me' , customerAuth , async (req , res) => {
     const allowedUpdates = ['email' , 'name', 'password' , 'address' , 'favouriteItems']
     const updates = Object.keys(req.body)
@@ -99,7 +94,6 @@ router.patch('/customers/me' , customerAuth , async (req , res) => {
 
 })
 
-//delete customer
 router.delete('/customers/me' , customerAuth , async(req,res) => {
     try{
         await req.customer.remove()

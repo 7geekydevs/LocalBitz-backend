@@ -84,7 +84,6 @@ customerSchema.pre('save' , async function(){
     }
 })
 
-//function to generate auth token
 customerSchema.methods.generateAuthToken = async function(){
     const user = this
     const token = jwt.sign({_id: user._id.toString()} , process.env.JWT_SECRET)
@@ -93,7 +92,6 @@ customerSchema.methods.generateAuthToken = async function(){
     return token
 }
 
-//function to find user in database
 customerSchema.statics.findCustomer = async (email , password) => {
     const customer = await Customer.findOne({email})
     if(!customer){

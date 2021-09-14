@@ -1,28 +1,19 @@
-//packages
 const express = require('express')
 
-//router
 const router = express.Router()
 
-//models
 const Cook = require('../models/cook_model')
 
-//middleware
 const {cookAuth} = require('../middleware/auth')
 
-//get my profile
 router.get('/cooks/me' , cookAuth , async(req , res) => {
     res.send(req.cook)
 })
 
-//get profile of any cook
 router.get('/cooks' , async(req , res) => {
 
-    // let query = new Map()
     let query = {}
 
-
-    //populating query object
     if(req.query.name){
         query.name = req.query.name
     }
@@ -62,7 +53,6 @@ router.get('/cooks' , async(req , res) => {
 }
 )
 
-//sign up cook
 router.post('/cooks' , async(req,res)=>{
     const cook = new Cook(req.body)
     try{
@@ -74,7 +64,6 @@ router.post('/cooks' , async(req,res)=>{
 }
 })
 
-//login cook
 router.post('/cooks/login' , async (req , res) => {
     try{
         const cook = await Cook.findCook(req.body.email , req.body.password)
@@ -97,7 +86,6 @@ router.post('/cooks/logout' , cookAuth , async(req,res) => {
     }
 })
 
-//update cook
 router.patch('/cooks/me' , cookAuth , async(req,res)=>{
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name' , 'email' , 'password' , 'address' , 'reviews' , "rating" , "openHours"]
@@ -146,7 +134,6 @@ router.patch('/cooks/me' , cookAuth , async(req,res)=>{
     
 })
 
-//delete cook
 router.delete('/cooks/me' , cookAuth ,async(req,res)=>{
     try{
         await req.cook.remove()
@@ -157,5 +144,4 @@ router.delete('/cooks/me' , cookAuth ,async(req,res)=>{
     }
 })
 
-//export router
 module.exports = router

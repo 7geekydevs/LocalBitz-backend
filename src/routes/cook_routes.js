@@ -6,6 +6,8 @@ const Cook = require('../models/cook_model')
 
 const {cookAuth} = require('../middleware/auth')
 
+const {patchLogic} = require('../services/patch')
+
 router.get('/cooks/me' , cookAuth , async(req , res) => {
     res.send(req.cook)
 })
@@ -89,49 +91,14 @@ router.post('/cooks/logout' , cookAuth , async(req,res) => {
 router.patch('/cooks/me' , cookAuth , async(req,res)=>{
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name' , 'email' , 'password' , 'address' , 'reviews' , "rating" , "openHours"]
-    const isOperationValid = updates.every((update) => allowedUpdates.includes(update))
-    if(!isOperationValid){
-        res.status(400).send({'Error' : 'Invalid Updates'})
+    const listAttributes = ['reviews']
+    const nestedAttributes = ['address' , 'openHours']
+    patchLogic(updates, allowedUpdates, listAttributes, nestedAttributes, req)
+    if(req["error"]){
+        return res.status(400).send(req["error"])
     }
-    try{
-        updates.forEach((update) => {
-            if(update === 'reviews' && req.cook[update].length > 0){
-                req.body[update].map(
-                    (review) =>{
-                        req.cook[update] = req.cook[update].concat(review)
-                    }
-                )
-            }
-            else if(update === 'address' || update === 'openHours'){
-                const parent = update
-                const updates = Object.keys(req.body[update])
-                const allowedUpdates = ['state_UT' , 'city' , 'postalCode' , 'addressLine1' , 'addressLine2' , 'open' , 'close']
-                const isOperationValid = updates.every(
-                    (update) => allowedUpdates.includes(update)    
-                )
-                if(!isOperationValid){
-                    return res.status(400).send({'Error' : 'Invalid Updates'})
-                }
-                try{
-                    req.cook[parent] = {...req.cook[parent] , ...req.body[update]}
-                    
-                }catch(e){
-                    console.log('error in address/openhours update')
-                }
-
-            }
-            else{
-                req.cook[update] = req.body[update]
-            }
-            
-        }
-        )
-        await req.cook.save()
-        return res.send(req.cook)
-        }catch(e){
-            res.status(500).send(e.toString())
-        }
-    
+    await req.cook.save()
+    return res.send(req.cook)  
 })
 
 router.delete('/cooks/me' , cookAuth ,async(req,res)=>{

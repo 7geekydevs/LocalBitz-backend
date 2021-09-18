@@ -6,6 +6,8 @@ const MenuItem = require('../models/menu_item_model')
 
 const {cookAuth} = require('../middleware/auth')
 
+const {patchLogic} = require('../services/patch')
+
 
 router.get('/menu' , async (req, res) =>{
     const items = await MenuItem.find({cook : req.query.cook})  
@@ -42,9 +44,18 @@ router.post('/menu' , cookAuth , async (req, res) =>{
 router.patch('/menu/:id' , cookAuth , async (req, res) =>{
 
     const allowedUpdates = ['name' , 'price' , 'rating' , 'dietType' , 'ingrediants' , 'reviews']
-    const updates = Object.keys(req.body)
-    const isOperationValid = updates.every((update) => allowedUpdates.includes(update))
     const listAttributes = ['reviews' , 'ingrediants']
+    const nestedAttributes = []
+    const updates = Object.keys(req.body)
+    const item = await MenuItem.findOne({ _id : req.params.id , cook : req.cook._id})
+    if(item === null){
+        // throw new Error('No Menu Item found!')
+        return res.send({"Error" : "Menu Item not found!"})
+    }
+    req.item = item
+    patchLogic(updates, allowedUpdates, listAttributes, nestedAttributes, req)
+    const isOperationValid = updates.every((update) => allowedUpdates.includes(update))
+    
 
     if(!isOperationValid){
         res.status(400).send({'Error' : 'Invalid Updates'})

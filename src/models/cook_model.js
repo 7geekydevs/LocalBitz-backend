@@ -99,7 +99,7 @@ const cookSchema = mongoose.Schema(
     }
 )
 
-//virtual relationships
+
 cookSchema.virtual(
     'menuitems' , 
     {
@@ -117,7 +117,7 @@ cookSchema.pre('save' , async function(){
     }
 })
 
-//function to generate auth token
+
 cookSchema.methods.generateAuthToken = async function(){
     const user = this
     const token = jwt.sign({_id: user._id.toString()} , process.env.JWT_SECRET)
@@ -126,7 +126,7 @@ cookSchema.methods.generateAuthToken = async function(){
     return token
 }
 
-//function to find user in database
+
 cookSchema.statics.findCook = async (email , password) => {
     const cook = await Cook.findOne({email})
     if(!cook){
@@ -139,8 +139,7 @@ cookSchema.statics.findCook = async (email , password) => {
     return cook
 }
 
-//creating cook model
+
 const Cook = mongoose.model('Cook' , cookSchema)
 
-//exporting cook model
 module.exports = Cook

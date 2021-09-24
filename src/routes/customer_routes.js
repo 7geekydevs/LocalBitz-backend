@@ -17,7 +17,7 @@ router.post('/customers' , async(req,res) =>{
         res.status(201).send({customer , token})
     }
     catch(e){
-       res.status(400).send(e.toString()) 
+        res.status(400).send(e.toString()) 
     }
 }
 )

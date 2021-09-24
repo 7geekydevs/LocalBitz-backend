@@ -77,6 +77,15 @@ const customerSchema = mongoose.Schema(
     }   
 )
 
+customerSchema.virtual(
+    'orders',
+    {
+        ref : 'Order',
+        localField : '_id',
+        foreignField : 'customer'
+    }
+)
+
 customerSchema.pre('save' , async function(){
     const customer = this
     if(customer.isModified('password')){

@@ -45,12 +45,8 @@ const menuItemSchema = new mongoose.Schema({
     dietType : {
         type : String,
         trim : true,
-        validate(value){
-            const allowedTypes = ['VEG' , 'NON_VEG']
-            if(!allowedTypes.includes(value)){
-                throw new Error('Invalid Value! Allowed Values : [VEG , NON_VEG]')
-            }
-        }
+        enum : ['VEG', 'NON_VEG'],
+        default : 'VEG'
     },
 
     reviews : [

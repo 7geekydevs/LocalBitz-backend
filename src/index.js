@@ -5,6 +5,7 @@ const express = require('express')
 const menuRouter = require('./routes/menu_item_routes')
 const cookRouter = require('./routes/cook_routes')
 const customerRouter = require('./routes/customer_routes')
+const orderRouter = require('./routes/order_routes')
 
 
 require('./db/db_connection')
@@ -16,6 +17,7 @@ app.use(express.json())
 app.use(menuRouter)
 app.use(cookRouter)
 app.use(customerRouter)
+app.use(orderRouter)
 
 const port = process.env.PORT
 

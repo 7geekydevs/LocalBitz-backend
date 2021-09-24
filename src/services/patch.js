@@ -1,9 +1,16 @@
+const chalk = require("chalk")
 const patchLogic = (updates, allowedUpdates, listAttributes, nestedAttributes, req, parent = undefined) => {
     let model;
-    if(req.cook){
+    if(req.cook && req.item){
+        model = req.item
+    }
+    else if(req.customer && req.order){
+        model = req.order
+    }
+    else if(req.cook){
         model = req.cook
     }
-    else{
+    else if(req.customer){
         model = req.customer
     }
     const isOperationValid = updates.every((update) => allowedUpdates.includes(update))

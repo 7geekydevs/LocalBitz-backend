@@ -8,6 +8,8 @@ const {cookAuth} = require('../middleware/auth')
 
 const {patchLogic} = require('../services/patch')
 
+const chalk = require("chalk")
+
 
 router.get('/menu' , async (req, res) =>{
     const items = await MenuItem.find({cook : req.query.cook})  
@@ -49,42 +51,16 @@ router.patch('/menu/:id' , cookAuth , async (req, res) =>{
     const updates = Object.keys(req.body)
     const item = await MenuItem.findOne({ _id : req.params.id , cook : req.cook._id})
     if(item === null){
-        // throw new Error('No Menu Item found!')
         return res.send({"Error" : "Menu Item not found!"})
     }
     req.item = item
     patchLogic(updates, allowedUpdates, listAttributes, nestedAttributes, req)
-    const isOperationValid = updates.every((update) => allowedUpdates.includes(update))
     
-
-    if(!isOperationValid){
-        res.status(400).send({'Error' : 'Invalid Updates'})
+    if(req["error"]){
+        return res.status(400).send(req["error"])
     }
-
-    try{
-        const item = await MenuItem.findOne({ _id : req.params.id , cook : req.cook._id})
-        if(item === null){
-            throw new Error('No Menu Item found!')
-        }
-        updates.forEach((update) => {
-            if((listAttributes.includes(update)) && item[update].length > 0){
-                req.body[update].map(
-                    (review) =>{
-                        item[update] = item[update].concat(review)
-                    }
-                )
-            }
-            else{
-                item[update] = req.body[update]
-            }
-            
-        }
-        )
-        await item.save()
-        return res.send(item)
-    }catch(e){
-        res.status(404).send(e.toString())
-    }
+    await req.item.save()
+    return res.send(req.item) 
 }
 )
 

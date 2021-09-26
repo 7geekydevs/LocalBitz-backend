@@ -19,10 +19,6 @@ app.use(cookRouter)
 app.use(customerRouter)
 app.use(orderRouter)
 
-// const port = process.env.PORT
 
-// app.listen(port , () => {
-//     console.log('server up on ' + port)
-// })
 
 module.exports = app

@@ -117,6 +117,11 @@ cookSchema.pre('save' , async function(){
     }
 })
 
+cookSchema.pre('remove' , async function(){
+    const cook = this
+    await MenuItem.deleteMany({cook : cook._id})
+})
+
 
 cookSchema.methods.generateAuthToken = async function(){
     const user = this

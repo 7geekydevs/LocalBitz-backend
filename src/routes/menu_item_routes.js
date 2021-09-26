@@ -8,7 +8,6 @@ const {cookAuth} = require('../middleware/auth')
 
 const {patchLogic} = require('../services/patch')
 
-const chalk = require("chalk")
 
 
 router.get('/menu' , async (req, res) =>{

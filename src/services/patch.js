@@ -1,4 +1,4 @@
-const chalk = require("chalk")
+
 const patchLogic = (updates, allowedUpdates, listAttributes, nestedAttributes, req, parent = undefined) => {
     let model;
     if(req.cook && req.item){

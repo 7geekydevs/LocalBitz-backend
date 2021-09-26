@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const Order = require('./order_model')
 
 const customerSchema = mongoose.Schema(
     {
@@ -91,6 +92,11 @@ customerSchema.pre('save' , async function(){
     if(customer.isModified('password')){
         customer.password = await bcrypt.hash(customer.password , 8)
     }
+})
+
+customerSchema.pre('remove' , async function(){
+    const customer = this
+    await Order.deleteMany({customer : customer._id})
 })
 
 customerSchema.methods.generateAuthToken = async function(){

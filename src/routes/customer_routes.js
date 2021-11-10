@@ -1,12 +1,30 @@
 const express = require('express')
+const multer = require('multer')
+const sharp = require('sharp')
 const Customer = require('../models/customer_model')
 const {customerAuth} = require('../middleware/auth')
 const {patchLogic} = require('../services/patch')
 
 const router = express.Router()
 
+const upload = new multer({
+    //if destination isnt provided to upload object then the image in request is forwarded to the function which executes for that route.
+    // dest : 'pfp',
+    limits : { 
+        fileSize : 1000000,
+    },
+    fileFilter(req,file,cb){
+        if(!file.originalname.match(/\.(jpeg|jpg|png)$/)){
+            return cb( new Error('Please upload an Image'))
+        }
+        cb(undefined , true)
+    }
+})
+
 router.get('/customers/me' , customerAuth , (req , res) => {
-    res.send(req.customer)
+    const customerObject = req.customer.toObject()
+    delete customerObject.pfp
+    res.send(customerObject)
 })
 
 router.post('/customers' , async(req,res) =>{
@@ -21,6 +39,24 @@ router.post('/customers' , async(req,res) =>{
     }
 }
 )
+
+router.post('/customers/me/pfp', customerAuth , upload.single('pfp') , async (req , res) => {
+    const buffer = await sharp(req.file.buffer).png().resize({height : 250 , width : 250}).toBuffer()
+    req.customer.pfp = buffer
+    await req.customer.save()
+    res.send()
+} , 
+//this function runs if there are errors in middle wre function (here file filter)
+(error , req , res , next) => {
+    res.status(400).send(error.message)
+} )
+
+//get my profile picture
+router.get('/customers/me/pfp', customerAuth , async (req , res) =>{
+        res.set('Content-Type','image/png')
+        res.send(req.customer.pfp)
+})
+
 
 router.post('/customers/login' , async (req , res) =>{
     try{

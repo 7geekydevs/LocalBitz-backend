@@ -72,6 +72,11 @@ const customerSchema = mongoose.Schema(
             }
             }
         ],
+
+        pfp : {
+            type : Buffer
+        }
+        
     },
     {
         timestamps : true

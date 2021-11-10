@@ -55,10 +55,12 @@ const menuItemSchema = new mongoose.Schema({
                 type : String
             }
         }
-    ]
+    ],
 
-
-
+    photo : {
+        type : Buffer
+    }
+    
 },
 {
     timestamps : true

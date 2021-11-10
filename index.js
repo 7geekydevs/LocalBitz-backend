@@ -19,6 +19,11 @@ app.use(cookRouter)
 app.use(customerRouter)
 app.use(orderRouter)
 
+//This is for production
+// module.exports = app
 
-
-module.exports = app
+//This is for development
+const port = process.env.PORT
+app.listen(port , () =>{
+    console.log('server up on ' + port)
+})

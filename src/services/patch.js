@@ -35,6 +35,7 @@ const patchLogic = (updates, allowedUpdates, listAttributes, nestedAttributes, r
                 else{
                     if(parent){
                         model[parent] = {...model[parent] , ...req.body[parent]}
+                        parent = undefined
                     }
                     else{
                             model[update] = req.body[update]  

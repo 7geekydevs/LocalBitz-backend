@@ -18,6 +18,9 @@ app.use(cookRouter)
 app.use(customerRouter)
 app.use(orderRouter)
 
-//This is for production
-module.exports = app
+// //This is for production
+// module.exports = app
 
+app.listen(3000 , () => {
+    console.log('Server is running on port 3000')
+})

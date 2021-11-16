@@ -44,7 +44,8 @@ router.post('/customers/me/pfp', customerAuth , upload.single('pfp') , async (re
     const buffer = await sharp(req.file.buffer).png().resize({height : 250 , width : 250}).toBuffer()
     req.customer.pfp = buffer
     await req.customer.save()
-    res.send()
+    res.set('Content-Type','image/png')
+    res.send(req.customer.pfp)
 } , 
 //this function runs if there are errors in middle wre function (here file filter)
 (error , req , res , next) => {

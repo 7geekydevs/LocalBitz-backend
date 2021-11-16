@@ -112,10 +112,10 @@ router.get('/cooks/:id/pfp' , async (req , res) =>{
 router.post('/cooks/login' , async (req , res) => {
     try{
         const cook = await Cook.findCook(req.body.email , req.body.password)
-        const cookObject = cook.toObject()
-        delete cookObject.pfp
+        // const cookObject = cook.toObject()
+        // delete cookObject.pfp
         const token = await cook.generateAuthToken()
-        res.send({cookObject , token})
+        res.send({cook , token})
     }
     catch(e){
         res.status(400).send(e.toString())

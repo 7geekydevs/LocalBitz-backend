@@ -60,13 +60,13 @@ router.get('/cooks' , async(req , res) => {
     }
 
     try{
-        const cookList = await Cook.find( query , {tokens : 0 , password : 0 , pfp : 0})
+        const cookList = await Cook.find( query , {tokens : 0 , password : 0})
         if(cookList.length === 0){
             throw new Error('Cook not found')
         }
         res.send(cookList)
     }catch(e){
-        res.status(400).send(e.toString())
+        res.status(200).send([])
     }
 }
 )
@@ -86,7 +86,8 @@ router.post('/cooks/me/pfp', cookAuth , upload.single('pfp') , async (req , res)
     const buffer = await sharp(req.file.buffer).png().resize({height : 250 , width : 250}).toBuffer()
     req.cook.pfp = buffer
     await req.cook.save()
-    res.send()
+    res.set('Content-Type','image/png')
+    res.send(req.cook.pfp)
 } , 
 //this function runs if there are errors in middle wre function (here file filter)
 (error , req , res , next) => {
@@ -111,10 +112,10 @@ router.get('/cooks/:id/pfp' , async (req , res) =>{
 router.post('/cooks/login' , async (req , res) => {
     try{
         const cook = await Cook.findCook(req.body.email , req.body.password)
-        const cookObject = cook.toObject()
-        delete cookObject.pfp
+        // const cookObject = cook.toObject()
+        // delete cookObject.pfp
         const token = await cook.generateAuthToken()
-        res.send({cookObject , token})
+        res.send({cook , token})
     }
     catch(e){
         res.status(400).send(e.toString())

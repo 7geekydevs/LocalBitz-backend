@@ -64,7 +64,8 @@ router.post('/menu/:id/photo', cookAuth , upload.single('photo') , async (req , 
     }
     item.photo = buffer
     await item.save()
-    res.send()
+    res.set('Content-Type','image/png')
+    res.send(item.photo)
 } , 
 //this function runs if there are errors in middle ware function (here file filter)
 (error , req , res , next) => {
